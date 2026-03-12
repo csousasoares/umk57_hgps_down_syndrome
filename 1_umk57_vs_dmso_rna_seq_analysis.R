@@ -806,3 +806,144 @@ ggsave(
   height = 6
 )
 
+## GSEA Different Metric -------------------------------------------------------
+
+head(df_hgps_of_interest)
+
+df_hgps_of_interest <- df_hgps_of_interest %>% 
+  dplyr::mutate(sign = log2FoldChange/abs(log2FoldChange)) %>% 
+  dplyr::mutate(metric = sign * (-log10(pvalue))) %>% 
+  dplyr::arrange(desc(metric))
+
+head(df_hgps_of_interest)
+
+hgps_umk57_ranked <- df_hgps_of_interest$metric
+names(hgps_umk57_ranked) <- df_hgps_of_interest$gene
+head(hgps_umk57_ranked, 10)
+
+
+hgps_umk57_hall_sign_pval <- clusterProfiler::GSEA(
+  hgps_umk57_ranked,
+  exponent = 1,
+  minGSSize = 0,
+  maxGSSize = 1000,
+  eps = 1e-50,
+  pvalueCutoff = 1,
+  pAdjustMethod = "BH",
+  TERM2GENE = hall_t2g,
+  verbose = TRUE,
+  seed = TRUE,
+  by = "fgsea",
+)
+
+df_hgps_umk57_hall_sign_pval <- as.data.frame(hgps_umk57_hall_sign_pval)
+
+df_hgps_umk57_hall_sign_pval_005 <- df_hgps_umk57_hall_sign_pval %>% 
+  dplyr::filter(p.adjust < 0.05)
+
+df_hgps_umk57_hall_sign_pval_005$Description <- gsub(
+  "HALLMARK_", "", df_hgps_umk57_hall_sign_pval_005$Description
+)
+
+df_hgps_umk57_hall_sign_pval_005 <- df_hgps_umk57_hall_sign_pval_005 %>% 
+  dplyr::mutate(direction = case_when(
+    NES > 0 ~ "Up",
+    NES < 0 ~ "Down"
+  ))
+
+cols <- c(
+  "Up" = "red",
+  "Down" = "blue"
+)
+
+alex_hgps <- ggplot(df_hgps_umk57_hall_sign_pval_005,
+                    aes(x = NES, y = forcats::fct_reorder(Description, NES))) +
+  geom_segment(aes(xend = 0, yend = Description)) +
+  geom_point(aes(fill = direction, size = p.adjust), shape = 21) +
+  scale_fill_manual(values = cols, name = "Direction") +
+  scale_size_continuous(range = c(8,3), transform = "log10", 
+                        name = "padjust") +
+  theme_bw(base_size = 15) +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  xlim(-3,3) +
+  labs(x = "NES", y = "Gene Sets\n",
+       title = "HGPS UMK57 vs DMSO",
+       subtitle = "Hallmark Gene Sets (sign * -log10(P-value))") +
+  geom_vline(xintercept = 0, linetype = "dashed")
+alex_hgps
+
+## For DS UMK57 vs DMSO:
+
+df_ds_of_interest <- df_ds_of_interest %>% 
+  dplyr::mutate(sign = log2FoldChange/abs(log2FoldChange)) %>% 
+  dplyr::mutate(metric = sign * (-log10(pvalue))) %>% 
+  dplyr::arrange(desc(metric))
+
+ds_of_interest_ranked <- df_ds_of_interest$metric
+names(ds_of_interest_ranked) <- df_ds_of_interest$gene
+head(ds_of_interest_ranked)
+
+Hall_ds_of_interest_sign_pval <- clusterProfiler::GSEA(
+  ds_of_interest_ranked,
+  exponent = 1,
+  minGSSize = 0,
+  maxGSSize = 1000,
+  eps = 1e-50,
+  pvalueCutoff = 1,
+  pAdjustMethod = "BH",
+  TERM2GENE = hall_t2g,
+  verbose = TRUE,
+  seed = TRUE,
+  by = "fgsea",
+)
+
+df_Hall_ds_of_interest_sign_pval <- as.data.frame(
+  Hall_ds_of_interest_sign_pval)
+
+head(df_Hall_ds_of_interest_sign_pval)
+
+
+df_Hall_ds_of_interest_sign_pval_005 <- df_Hall_ds_of_interest_sign_pval %>% 
+  dplyr::filter(p.adjust < 0.05)
+
+df_Hall_ds_of_interest_sign_pval_005$Description <- gsub(
+  "HALLMARK_", "", df_Hall_ds_of_interest_sign_pval_005$Description
+)
+
+df_Hall_ds_of_interest_sign_pval_005 <- df_Hall_ds_of_interest_sign_pval_005 %>% 
+  dplyr::mutate(direction = case_when(
+    NES > 0 ~ "Up",
+    NES < 0 ~ "Down"
+  ))
+
+cols <- c(
+  "Up" = "red",
+  "Down" = "blue"
+)
+
+alex_ds <- ggplot(df_Hall_ds_of_interest_sign_pval_005,
+                  aes(x = NES, y = forcats::fct_reorder(Description, NES))) +
+  geom_segment(aes(xend = 0, yend = Description)) +
+  geom_point(aes(fill = direction, size = p.adjust), shape = 21) +
+  scale_fill_manual(values = cols, name = "Direction") +
+  scale_size_continuous(range = c(8,3), transform = "log10", name = "padjust") +
+  theme_bw(base_size = 15) +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  xlim(-3,3) +
+  labs(x = "NES", y = "Gene Sets\n",
+       title = "DS UMK57 vs DMSO",
+       subtitle = "Hallmark Gene Sets (sign * -log10(P-value))") +
+  geom_vline(xintercept = 0, linetype = "dashed")
+alex_ds
+
+alex_hgps + alex_ds
+
+ggsave(
+  path = "output_data\\plots",
+  "sign_pval_hallmarks_hgps_ds_umk57_dmso_padj_005.png",
+  width = 14.5,
+  height = 6.5
+)
+
