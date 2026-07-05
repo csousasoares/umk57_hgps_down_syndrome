@@ -69,6 +69,16 @@ gene_tpm_log2_goi <- t(gene_tpm_log2_goi) %>% as.data.frame()
 
 gene_tpm_log2_goi$sample <- row.names(gene_tpm_log2_goi)
 
+
+foxm1_kif2c_source <- gene_tpm_log2_goi |> 
+  dplyr::rename(Sample = sample) |> 
+  dplyr::left_join(metadata, join_by("Sample"))
+
+write.csv(
+  foxm1_kif2c_source,
+  "output_data/excel_results/log2_tpm_foxm1_kif2c.csv"
+)
+
 gene_tpm_log2_goi_2 <- merge(gene_tpm_log2_goi, metadata, by.x = "sample", by.y = "Sample")
 
 colnames(gene_tpm_log2_goi_2)
@@ -107,6 +117,8 @@ gene_tpm_log2_goi_2 <- merge(gene_tpm_log2_goi, metadata, by.x = "sample", by.y 
 colnames(gene_tpm_log2_goi_2)
 
 gene_tpm_log2_goi_2 <- gene_tpm_log2_goi_2 %>% dplyr::rename("FOXM1" = "2305", "KIF2C" = "11004")
+
+
 
 min(gene_tpm_log2_goi_2$FOXM1)
 min(gene_tpm_log2_goi_2$KIF2C)

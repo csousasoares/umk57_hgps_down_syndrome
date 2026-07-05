@@ -104,6 +104,11 @@ hgps_neo_hall <- clusterProfiler::GSEA(
 
 df_hgps_neo_hall <- as.data.frame(hgps_neo_hall)
 
+write.csv(
+  df_hgps_neo_hall,
+  "output_data/excel_results/df_hgps_neo_hall.csv"
+)
+
 df_hgps_neo_hall_005 <- df_hgps_neo_hall %>% 
   dplyr::filter(p.adjust < 0.05)
 
@@ -210,6 +215,11 @@ ds_neo_hall <- clusterProfiler::GSEA(
 )
 
 df_ds_neo_hall <- as.data.frame(ds_neo_hall)
+
+write.csv(
+  df_ds_neo_hall,
+  "output_data/excel_results/df_ds_neo_hall.csv"
+)
 
 df_ds_neo_hall_005 <- df_ds_neo_hall %>% 
   dplyr::filter(p.adjust < 0.05)
@@ -435,6 +445,11 @@ hgps__vs_neo_dna_repair <- clusterProfiler::GSEA(
 
 df_hgps__vs_neo_dna_repair <- as.data.frame(hgps__vs_neo_dna_repair)
 
+write.csv(
+  df_hgps__vs_neo_dna_repair,
+  "output_data/excel_results/df_hgps__vs_neo_dna_repair.csv"
+)
+
 df_hgps__vs_neo_dna_repair_005 <- df_hgps__vs_neo_dna_repair %>% 
   dplyr::filter(p.adjust < 0.05)
 
@@ -490,6 +505,11 @@ ds__vs_neo_dna_repair <- clusterProfiler::GSEA(
 
 
 df_ds__vs_neo_dna_repair <- as.data.frame(ds__vs_neo_dna_repair)
+
+write.csv(
+  df_ds__vs_neo_dna_repair,
+  "output_data/excel_results/df_ds__vs_neo_dna_repair.csv"
+)
 
 df_ds__vs_neo_dna_repair_005 <- df_ds__vs_neo_dna_repair %>% 
   dplyr::filter(p.adjust < 0.05)
@@ -998,9 +1018,6 @@ ggsave("gseaplot2_senmayo_all.pdf",
        path = "output_data\\plots\\supp_figures",
        width = 26,
        height = 5)
-
-## SenMayo Heatmap -------------------------------------------------------------
-
 
 
 ## Heatmap FOXM1, KIF2C, etc ---------------------------------------------------

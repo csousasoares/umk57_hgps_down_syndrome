@@ -6,3 +6,5 @@
 
 # Output folders
 environments/
+input_data/
+output_data/

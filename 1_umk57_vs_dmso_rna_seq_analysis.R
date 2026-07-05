@@ -586,6 +586,11 @@ saveRDS(hgps_dna_repair, "output_data\\hgps_dna_repair.rds")
 
 df_hgps_dna_repair <- as.data.frame(hgps_dna_repair)
 
+write.csv(
+  df_hgps_dna_repair,
+  "output_data/excel_results/df_hgps_dna_repair.csv"
+)
+
 df_hgps_dna_repair_005 <- df_hgps_dna_repair %>% 
   dplyr::filter(p.adjust < 0.05)
 
@@ -639,6 +644,11 @@ saveRDS(t21_dna_repair, "output_data\\t21_dna_repair.rds")
 
 
 df_t21_dna_repair <- as.data.frame(t21_dna_repair)
+
+write.csv(
+  df_t21_dna_repair,
+  "output_data/excel_results/df_t21_dna_repair.csv"
+)
 
 df_t21_dna_repair_005 <- df_t21_dna_repair %>% 
   dplyr::filter(p.adjust < 0.05)
